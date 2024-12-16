@@ -20,4 +20,4 @@ add_library(hull_graph_shortest_way
 
 add_executable(shortest_way main.cpp)
 
-target_link_libraries(shortest_way PRIVATE gigagraph)
+target_link_libraries(shortest_way PRIVATE hull_graph_shortest_way)
