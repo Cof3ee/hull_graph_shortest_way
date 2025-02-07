@@ -6,20 +6,30 @@
 #include <iostream>
 #include <fstream>
 #include <cassert>
+#include <string>
 
 using namespace std;
 
 static double distance(vertex, vertex);
 
-int main( int argc, char* argv[] )
+int main(int argc, char* argv[])
 {
     int exit_code = EXIT_SUCCESS;
+    size_t final_vertex_index = 0;
+
+    bool wait_for_final_vertex_input = argc == 2;
+
+    if (wait_for_final_vertex_input)
+    {
+        final_vertex_index = stoull(argv[1]);
+        cout << "using final vertex index from command line flag: " << final_vertex_index << endl;
+    }
 
     try
     {
-        const auto vertexes_number = 100;
+        constexpr size_t vertexes_count = 100;
         constexpr uint32_t radius = 100;
-        auto vertexes = random_vertex_generator::generate_in_circle( vertexes_number, radius );
+        auto vertexes = random_vertex_generator::generate_in_circle(vertexes_count, radius);
 
         hull_graph g{ vertexes };
 
@@ -32,15 +42,17 @@ int main( int argc, char* argv[] )
         }
 
         const auto graphml_filename = "graph.graphml";
-        ofstream graphml_file( graphml_filename );
-        graph_serializer::serialize_to_graphml( graphml_file, g );
+        ofstream graphml_file(graphml_filename);
+        graph_serializer::serialize_to_graphml(graphml_file, g);
 
         for (size_t i = 0; i < vertexes.size(); ++i)
             cout << i << ": (" << vertexes[i].x << vertexes[i].y << ')' << endl;
 
-        cout << "select index of final vertex" << endl;
-        size_t final_vertex_index;
-        cin >> final_vertex_index;
+        if (!wait_for_final_vertex_input)
+        {
+            cout << "select index of final vertex" << endl;
+            cin >> final_vertex_index;
+        }
 
         auto shortest_way = shortest_way_finder::find(g, vertexes[final_vertex_index]);
         assert(shortest_way.size() > 0);
@@ -60,12 +72,12 @@ int main( int argc, char* argv[] )
             shortest_way_cost += distance(shortest_way[i], shortest_way[i + 1]);
         cout << "shortest way total cost: " << shortest_way_cost << endl;
     }
-    catch( std::exception& ex )
+    catch (std::exception& ex)
     {
         cerr << ex.what() << endl;
         exit_code = EXIT_FAILURE;
     }
-    catch( ... )
+    catch (...)
     {
         cerr << "caught unhandled exception in the main thread" << endl;
         exit_code = EXIT_FAILURE;
