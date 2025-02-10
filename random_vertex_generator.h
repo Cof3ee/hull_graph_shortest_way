@@ -4,6 +4,7 @@
 
 #include <cstddef>
 #include <vector>
+#include <cstdint>
 
 class random_vertex_generator
 {
