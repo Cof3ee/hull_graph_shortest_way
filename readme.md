@@ -41,5 +41,5 @@ cmake --build .
 
 4. Run executables  
 ```
-./hull_graph_shortest_way ../10
+./hull_graph_shortest_way 10
 ```
